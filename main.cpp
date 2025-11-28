@@ -1,7 +1,65 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
+
+int findMin(int *distancias, int *procesados) {
+    int min = INT_MAX;
+    int minIndex = 0;
+
+    for (int i = 0; i < 900; i++) {
+        if (procesados[i] != 1 && distancias[i] < min) {
+            min = distancias[i];
+            minIndex = i;
+        }
+    }
+    return minIndex;
+}
+
+void Dijkstra (int origen, int** matrix, int destino)
+{
+    int *distancias = (int *) malloc(900 * sizeof(int));
+    int *procesados = (int *) calloc(900, sizeof(int));
+    int *desde = (int *) calloc(900, sizeof(int));
+    int i, j, u;
+    int nueva_distancia;
+
+    for ( i = 0; i < 900; i++) {
+        distancias[i] = INT_MAX;
+    }
+    distancias[origen] = 0;
+
+    for ( i = 0; i < 900; i++) {
+        u = findMin(distancias, procesados);
+        procesados[u] = 1;
+
+        for ( j = 0; j < 900; j++) {
+            if (matrix[u][j] != 0) {
+                nueva_distancia = distancias[u] + matrix[u][j];
+                if (nueva_distancia < distancias[j]) {
+                    distancias[j] = nueva_distancia;
+                    desde[j] = u;
+                }
+            }
+        }
+    }
+
+    int current_index = destino;
+    while (current_index != origen) {
+        int x = current_index / 30;
+        int y = current_index % 30;
+        cout << "(" << x << "," << y << ")" << endl;
+        current_index = desde[current_index];
+    }
+    int x = origen / 30;
+    int y = origen % 30;
+    cout << "(" << x << "," << y << ")" << endl;
+
+    free(procesados);
+    free(desde);
+    free(distancias);
+}
 
 void menus_restaurantes() {
     //Se usan para leer el txt
@@ -215,19 +273,75 @@ void grid_rutas(){
     }
     cityFile.close();
 
-
-    for(int i = 0; i < 50; i++) {
-        for(int j = 0; j < 50; j++) {
-            cout << matrix[i][j] << " ";
-        }
-        cout << endl;
+    string *restaurantes = new string[900];
+    for(int i = 0; i < 900; i++) {
+        restaurantes[i] = " ";
     }
 
+    ifstream restaurantesFile("restaPlaces.txt");
+    if(restaurantesFile.is_open()) {
+        while (getline(restaurantesFile,sline)) {
+            line = sline;
+            index = line.find("(");
+            string nombre = line.substr(0,index-1);
 
+            line = line.substr(index+1);
+            index = line.find(",");
+            int x = stoi(line.substr(0,index));
+
+            line = line.substr(index+2);
+            index = line.find(")");
+            int y = stoi(line.substr(0,index));
+
+            int indexr = x*30 + y;
+            restaurantes[indexr] = nombre;
+        }
+    }
+    restaurantesFile.close();
+
+    ifstream ordersFile("orders30x30.txt");
+    if(ordersFile.is_open()) {
+        while(getline(ordersFile,sline)) {
+            string orden_completa;
+            string restaurante;
+            line = sline;
+            index = line.find(")(");
+            orden_completa = line.substr(0,index+1);
+
+            line = line.substr(index+2);
+            index = line.find(",");
+            a = stoi(line.substr(0,index));
+
+            line = line.substr(index+2);
+            index = line.find(")");
+            b = stoi(line.substr(0,index));
+
+            index = orden_completa.find("R:");
+            restaurante = orden_completa.substr(index+2);
+            index = restaurante.find("O:");
+            restaurante = restaurante.substr(0,index-1);
+
+            cout << restaurante << endl;
+
+            int p1 = 0;
+            for(int i = 0; i < 900; i++) {
+                if(restaurante == restaurantes[i]) {
+                    p1 = i;
+                    break;
+                }
+            }
+            int p2 = a*30 + b;
+
+            cout << orden_completa << "\nCamino mas corto\n";
+            Dijkstra(p2,matrix,p1);
+            cout << endl;
+        }
+    }
 
     for(int i = 0; i < 900; i++) {
         delete[] matrix[i];
     }
+    delete[] restaurantes;
 }
 
 int main(){

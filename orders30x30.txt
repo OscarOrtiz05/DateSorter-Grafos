@@ -1,0 +1,5 @@
+Feb 8 20:0:29 R:Sunset Grill O:Salmon a la Parrilla(283)(22, 4)
+Jul 7 17:46:6 R:El Cafe del Valle O:Arroz con Pollo(272)(14, 27)
+Mar 26 18:34:32 R:Casa de las empanadas O:Tacos de Camaron(271)(19, 19)
+Mar 13 15:2:11 R:The Artisan Table O:Huevos Benedictinos(251)(20, 27)
+Nov 7 14:46:2 R:Sabores del Mundo O:Lasana Bolonesa(255)(9, 8)
