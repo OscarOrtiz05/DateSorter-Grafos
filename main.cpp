@@ -346,7 +346,7 @@ void grid_rutas(){
 
 int main(){
 
-    //menus_restaurantes();
+    menus_restaurantes();
 
     grid_rutas();
 
