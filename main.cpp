@@ -5,7 +5,7 @@ using namespace std;
 
 void menus_restaurantes() {
     //Se usan para leer el txt
-    string sline,line, aux;
+    string sline,line;
     int index;
     string r,p;
     int a,b,precio;
@@ -166,9 +166,75 @@ void menus_restaurantes() {
     delete[] menus;
 }
 
+void grid_rutas(){
+    //Se usan para leer el txt
+    string sline,line, aux;
+    int index;
+    int a,b;
+    int x1,y1,x2,y2;
+    int distance;
+
+    //Matriz del grafo y arreglo con los dinosaurios
+        int* matrix[900];
+        for(int i = 0; i < 900; i++) {
+            matrix[i] = new int[900];
+            for(int j = 0; j < 900; j++) {
+                matrix[i][j] = 0;
+            }
+        }
+
+    ifstream cityFile("city30x30.txt");
+
+    if(cityFile.is_open()){
+        while(getline(cityFile, sline)){
+            line = sline;
+            index = line.find(",");
+            x1 = stoi(line.substr(1,index));
+
+            line = line.substr(index+2);
+            index = line.find(")");
+            y1 = stoi(line.substr(0,index));
+
+            line = line.substr(index+3);
+            index = line.find(",");
+            x2 = stoi(line.substr(0,index));
+
+            line = line.substr(index+2);
+            index = line.find(")");
+            y2 = stoi(line.substr(0,index));
+
+            line = line.substr(index+2);
+            distance = stoi(line.substr(0));
+
+            a = x1*30 + y1;
+            b = x2*30 + y2;
+
+            matrix[a][b] = distance;
+            matrix[b][a] = distance;
+        }
+    }
+    cityFile.close();
+
+
+    for(int i = 0; i < 50; i++) {
+        for(int j = 0; j < 50; j++) {
+            cout << matrix[i][j] << " ";
+        }
+        cout << endl;
+    }
+
+
+
+    for(int i = 0; i < 900; i++) {
+        delete[] matrix[i];
+    }
+}
+
 int main(){
 
-    menus_restaurantes();
+    //menus_restaurantes();
+
+    grid_rutas();
 
     return 0;
 }
